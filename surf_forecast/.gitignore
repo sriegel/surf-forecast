@@ -1,0 +1,10 @@
+
+target/
+dbt_packages/
+logs/
+
+# dbt
+logs/
+surf_forecast/target/
+surf_forecast/dbt_packages/
+surf_forecast/logs/

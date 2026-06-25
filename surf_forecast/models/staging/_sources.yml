@@ -1,0 +1,37 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: >
+      Raw, append-only tables loaded directly from NOAA buoy and
+      Open-Meteo Parquet checkpoints via load_to_duckdb.py. Not
+      deduplicated -- multiple loads of the same data will create
+      duplicate rows here by design, since dedup happens in staging.
+    schema: main
+    tables:
+      - name: raw_buoy_observations
+        description: >
+          One row per NDBC buoy observation (merged meteorological +
+          wave-summary feeds), per load. May contain duplicate
+          timestamps if the same checkpoint was loaded more than once.
+        columns:
+          - name: station_id
+            description: NDBC station identifier, e.g. '46225'.
+          - name: timestamp
+            description: UTC timestamp of the observation.
+          - name: wvht
+            description: Significant wave height (meters), from the .spec feed.
+
+      - name: raw_marine_forecasts
+        description: >
+          One row per (latitude, longitude, forecast_issued_at,
+          valid_time) from the Open-Meteo Marine API. Each pipeline
+          run adds a new forecast snapshot rather than overwriting
+          prior ones, enabling future forecast-accuracy analysis.
+        columns:
+          - name: forecast_issued_at
+            description: UTC timestamp when this forecast was pulled.
+          - name: valid_time
+            description: UTC timestamp the forecasted values apply to.
+          - name: wave_height
+            description: Forecasted combined wave height (meters).

@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_buoy_observations
+    description: >
+      Deduplicated NOAA buoy observations (meteorological + wave
+      summary merged), one row per (station_id, timestamp).
+    columns:
+      - name: station_id
+        description: NDBC station identifier.
+        tests:
+          - not_null
+
+      - name: timestamp
+        description: UTC timestamp of the observation.
+        tests:
+          - not_null
+
+      - name: steepness
+        description: >
+          Wave steepness category reported by NDBC. Expected to be
+          one of a small fixed set of values; flags if NOAA changes
+          their vocabulary or a parsing bug introduces garbage data.
+        tests:
+          - accepted_values:
+              values: ['SWELL', 'VERY_STEEP', 'STEEP', 'AVERAGE']
+              quote: true
+              config:
+                where: "steepness is not null"
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - station_id
+            - timestamp
+
+  - name: stg_marine_forecasts
+    description: >
+      Deduplicated Open-Meteo marine forecasts, one row per
+      (latitude, longitude, forecast_issued_at, valid_time).
+    columns:
+      - name: forecast_issued_at
+        description: UTC timestamp when this forecast was pulled.
+        tests:
+          - not_null
+
+      - name: valid_time
+        description: UTC timestamp the forecasted values apply to.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - latitude
+            - longitude
+            - forecast_issued_at
+            - valid_time

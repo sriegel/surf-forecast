@@ -23,16 +23,18 @@ models:
           their vocabulary or a parsing bug introduces garbage data.
         tests:
           - accepted_values:
-              values: ['SWELL', 'VERY_STEEP', 'STEEP', 'AVERAGE']
+              arguments:
+                values: ['SWELL', 'VERY_STEEP', 'STEEP', 'AVERAGE']
               quote: true
               config:
                 where: "steepness is not null"
 
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - station_id
-            - timestamp
+          arguments:
+            combination_of_columns:
+              - station_id
+              - timestamp
 
   - name: stg_marine_forecasts
     description: >
@@ -51,8 +53,9 @@ models:
 
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - latitude
-            - longitude
-            - forecast_issued_at
-            - valid_time
+          arguments:
+            combination_of_columns:
+              - latitude
+              - longitude
+              - forecast_issued_at
+              - valid_time

@@ -20,7 +20,7 @@ import os
 import duckdb
 import pandas as pd
 
-DB_PATH = "surf.duckdb"
+DB_PATH = f"md:surf_forecast?motherduck_token={os.environ['MOTHERDUCK_TOKEN']}"
 SCHEMA_PATH = "schema.sql"
 DATA_DIR = "data/raw"
 

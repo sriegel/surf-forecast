@@ -1,0 +1,7 @@
+surf_forecast:
+  outputs:
+    dev:
+      type: duckdb
+      path: "md:surf_forecast?motherduck_token={{ env_var('MOTHERDUCK_TOKEN') }}"
+      threads: 4
+  target: dev

@@ -22,4 +22,4 @@ select
 
 from forecasts f
 inner join observed o
-    on f.valid_time = o.timestamp
+     on f.valid_time = date_trunc('hour', o.timestamp)

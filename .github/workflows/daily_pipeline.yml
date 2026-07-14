@@ -24,6 +24,12 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Install dbt packages
+        run: uv run dbt deps --profiles-dir .
+        working-directory: surf_forecast
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+          
       - name: Fetch buoy data
         run: uv run python fetch_buoy.py
 

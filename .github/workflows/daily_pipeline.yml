@@ -36,13 +36,13 @@ jobs:
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
 
       - name: Run dbt models
-        run: uv run dbt run --profiles-dir 
+        run: uv run dbt run --profiles-dir .
         working-directory: surf_forecast
         env:
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
 
       - name: Run dbt tests
-        run: uv run dbt test --profiles-dir 
+        run: uv run dbt test --profiles-dir .
         working-directory: surf_forecast
         env:
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

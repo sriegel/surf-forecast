@@ -1,0 +1,48 @@
+name: Daily Surf Forecast Pipeline
+
+on:
+  schedule:
+    - cron: '0 14 * * *'  # 7am PST / 6am PDT daily
+  workflow_dispatch:        # allows manual trigger from GitHub UI
+
+jobs:
+  run_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Fetch buoy data
+        run: uv run python fetch_buoy.py
+
+      - name: Fetch Open-Meteo forecast
+        run: uv run python fetch_openmeteo.py
+
+      - name: Load to MotherDuck
+        run: uv run python load_to_duckdb.py
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+
+      - name: Run dbt models
+        run: uv run dbt run
+        working-directory: surf_forecast
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+
+      - name: Run dbt tests
+        run: uv run dbt test
+        working-directory: surf_forecast
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

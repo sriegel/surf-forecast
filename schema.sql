@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS raw_marine_forecasts (
     swell_wave_height     DOUBLE,
     swell_wave_period     DOUBLE,
     swell_wave_direction  DOUBLE,
+    wind_wave_height      DOUBLE,
+    wind_wave_period      DOUBLE,
+    wind_wave_direction   DOUBLE,
     _loaded_at            TIMESTAMP DEFAULT current_timestamp
 );
 
@@ -87,7 +90,8 @@ SELECT
     forecast_issued_at,
     valid_time,
     wave_height, wave_direction, wave_period,
-    swell_wave_height, swell_wave_period, swell_wave_direction
+    swell_wave_height, swell_wave_period, swell_wave_direction,
+    wind_wave_height, wind_wave_period, wind_wave_direction
 FROM (
     SELECT *,
         row_number() OVER (
@@ -111,6 +115,11 @@ SELECT
     wvht  AS wave_height_m,
     swh   AS swell_height_m,
     swp   AS swell_period_s,
+    swd   AS swell_direction_compass,
+    wwh   AS wind_wave_height_m,
+    wwp   AS wind_wave_period_s,
+    wwd   AS wind_wave_direction_compass,
+    steepness,
     apd   AS avg_period_s,
     mwd   AS wave_direction_deg,
     wspd  AS wind_speed_ms,

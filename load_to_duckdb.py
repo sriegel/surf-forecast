@@ -127,7 +127,13 @@ def load_openmeteo_checkpoints(con: duckdb.DuckDBPyConnection) -> int:
             "latitude", "longitude", "forecast_issued_at", "valid_time",
             "wave_height", "wave_direction", "wave_period",
             "swell_wave_height", "swell_wave_period", "swell_wave_direction",
+            "wind_wave_height", "wind_wave_period", "wind_wave_direction",
         ]
+        # Older checkpoint files pulled before wind-wave fields were added
+        # to HOURLY_VARS won't have those columns -- fill with NULL.
+        for col in expected_cols:
+            if col not in df.columns:
+                df[col] = None
         df = df[expected_cols]
 
         con.register("df_tmp", df)
@@ -146,6 +152,13 @@ def load_openmeteo_checkpoints(con: duckdb.DuckDBPyConnection) -> int:
 
 def main():
     con = duckdb.connect(DB_PATH)
+    # Pin the session timezone so tz-aware pandas columns convert to the
+    # naive TIMESTAMP columns consistently regardless of which machine
+    # runs this script (local dev vs. the UTC GitHub Actions runner).
+    # Without this, DuckDB converts using the client's local system
+    # timezone, silently shifting every timestamp loaded from a non-UTC
+    # machine.
+    con.execute("SET TimeZone='UTC'")
     init_schema(con)
 
     print("Loading buoy checkpoints into raw_buoy_observations...")
@@ -164,7 +177,7 @@ def main():
     print(f"\nfct_surf_conditions: {result[0]} rows, {result[1]} to {result[2]}")
 
     con.close()
-    print(f"\nDatabase saved to: {DB_PATH}")
+    print("\nDatabase saved to: md:surf_forecast")
 
 
 if __name__ == "__main__":

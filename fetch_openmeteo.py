@@ -27,7 +27,10 @@ DATA_DIR = "data/raw"
 #   wave_period           ~ APD   (average period)
 #   swell_wave_height     ~ SwH   (swell height)
 #   swell_wave_period     ~ SwP   (swell period)
-#   swell_wave_direction  (no direct buoy equivalent, but useful)
+#   swell_wave_direction  ~ SwD   (swell direction)
+#   wind_wave_height      ~ WWH   (wind-wave height)
+#   wind_wave_period      ~ WWP   (wind-wave period)
+#   wind_wave_direction   ~ WWD   (wind-wave direction)
 HOURLY_VARS = [
     "wave_height",
     "wave_direction",
@@ -35,6 +38,9 @@ HOURLY_VARS = [
     "swell_wave_height",
     "swell_wave_period",
     "swell_wave_direction",
+    "wind_wave_height",
+    "wind_wave_period",
+    "wind_wave_direction",
 ]
 
 
